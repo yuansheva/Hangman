@@ -1,0 +1,152 @@
+package hangman;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Random;
+
+public class Hangman_Bufferedreader {
+	static String[] words(int x) {
+		//SOAL
+		String[] soal;
+		
+		String[] a = {"P","I","S","A","N","G"};
+		String[] b = {"M","I","N","U","M"};
+		String[] c = {"S","A","P","I"};
+		String[] d = {"G","A","J","A","H"};
+		String[] e = {"H","U","T","A","N"};
+		String[] f = {"G","E","L","A","S"};
+		
+		if(x == 1)
+			soal = a;
+		else if(x == 2)
+			soal = b;
+		else if(x == 3)
+			soal = c;
+		else if(x == 4)
+			soal = d;
+		else if(x == 5)
+			soal = e;
+		else 
+			soal = f;
+	
+		return soal;
+	}
+	
+	
+	static void clue(int x) {
+		
+		if(x==1) 
+			System.out.println("Buah yang berwarna kuning");
+		else if(x==2) 
+			System.out.println("Ketika haus kita harus");
+		else if(x==3) 
+			System.out.println("Hewan ternak");
+		else if(x==4) 
+			System.out.println("Untuk yang mempunyai belalai");
+		else if(x==5) 
+			System.out.println("Paru-paru dunia");
+		else  
+			System.out.println("Alat untuk mengambil air");
+	}
+	
+	static int acak() {
+		Random acak = new Random();
+		int hasil = 1 + acak.nextInt(6);
+		
+		return hasil;
+	}
+	
+	
+	static void mulai(String[] a) {
+		for(int i=0;i<a.length;i++) {
+			System.out.print("_ ");
+		}
+	};
+	
+	static void check(String x, String[] soal, int[] mark, String[] hasil) {
+		for(int i=0;i<soal.length;i++) {
+			if (x.equalsIgnoreCase(soal[i])) {
+				hasil[i] = soal[i];
+				mark[i] = 1;
+			}
+			if(mark[i] == 1) {
+				System.out.print(hasil[i] + " ");
+			}
+			else {
+				System.out.print("_ ");
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		BufferedReader inputJawaban = new BufferedReader(new InputStreamReader(System.in));
+		String[] soal;							
+		int[] mark,before;						
+		
+		String[] hasil;							
+		boolean status = false;					
+		boolean done = false;					
+		String tebak = "";						
+		String answer = "";						
+		int life = 7;							
+		
+		int x = acak();
+		soal = words(x);
+		
+		mark = new int[soal.length];
+		hasil = new String[soal.length];
+		before = new int[soal.length];
+		
+		for(int i=0;i<soal.length;i++) {
+			mark[i] = 0;
+			before[i] = 0;
+		}
+		
+		clue(x);
+		mulai(soal);
+		System.out.println("\tNyawa = " + life);
+		while(life > 0) {
+			try {
+				tebak = inputJawaban.readLine();
+			}
+			catch(IOException e) {
+				System.out.println("Error!");
+			}
+				
+			check(tebak,soal,mark,hasil);
+			for(int i=0;i<soal.length;i++) {
+				if(before[i] != mark[i]) {
+					status = true;
+				}
+				before[i] = mark[i];
+			}
+			if(status == false) {
+				life--;
+			}
+			status = false;
+			System.out.println("\tSisa nyawa = " + life);
+			
+			done = true;
+			for(int i=0;i<soal.length;i++) {
+				if(mark[i] == 0) {
+					done = false;
+				}
+			}
+			if(done == true) {
+				life = 0;
+			}
+		}
+		
+		System.out.println();
+		if(done == true) {
+			System.out.print("Congrats! You Win");
+		}
+		else {
+			for(int i=0;i<soal.length;i++) {
+				answer += soal[i] + " ";
+			}
+			System.out.print("Game Over! The word was " + answer);
+		}
+	}
+}
